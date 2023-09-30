@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>GAMworkshop</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Chris Mainey" />
+    <meta name="date" content="2023-09-30" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+.pull-left[
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;
+&lt;br&gt;&lt;br&gt;
+
+# Fitting Wiggly Data
+### Why `mgcv` is awesome
+
+&lt;br&gt;&lt;br&gt;
+&lt;br&gt;&lt;br&gt;
+
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 48v40.805c-22.422 18.259-58.168 46.651-134.587 106.49-16.841 13.247-50.201 45.072-73.413 44.701-23.208.375-56.579-31.459-73.413-44.701C106.18 199.465 70.425 171.067 48 152.805V112h416zM48 400V214.398c22.914 18.251 55.409 43.862 104.938 82.646 21.857 17.205 60.134 55.186 103.062 54.955 42.717.231 80.509-37.199 103.053-54.947 49.528-38.783 82.032-64.401 104.947-82.653V400H48z"&gt;&lt;/path&gt;&lt;/svg&gt; [c.mainey1@nhs.net](mailto:c.mainey1@nhs.net)
+&lt;svg viewBox="0 0 496 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M336.5 160C322 70.7 287.8 8 248 8s-74 62.7-88.5 152h177zM152 256c0 22.2 1.2 43.5 3.3 64h185.3c2.1-20.5 3.3-41.8 3.3-64s-1.2-43.5-3.3-64H155.3c-2.1 20.5-3.3 41.8-3.3 64zm324.7-96c-28.6-67.9-86.5-120.4-158-141.6 24.4 33.8 41.2 84.7 50 141.6h108zM177.2 18.4C105.8 39.6 47.8 92.1 19.3 160h108c8.7-56.9 25.5-107.8 49.9-141.6zM487.4 192H372.7c2.1 21 3.3 42.5 3.3 64s-1.2 43-3.3 64h114.6c5.5-20.5 8.6-41.8 8.6-64s-3.1-43.5-8.5-64zM120 256c0-21.5 1.2-43 3.3-64H8.6C3.2 212.5 0 233.8 0 256s3.2 43.5 8.6 64h114.6c-2-21-3.2-42.5-3.2-64zm39.5 96c14.5 89.3 48.7 152 88.5 152s74-62.7 88.5-152h-177zm159.3 141.6c71.4-21.2 129.4-73.7 158-141.6h-108c-8.8 56.9-25.6 107.8-50 141.6zM19.3 352c28.6 67.9 86.5 120.4 158 141.6-24.4-33.8-41.2-84.7-50-141.6h-108z"&gt;&lt;/path&gt;&lt;/svg&gt; [mainard.co.uk](https://www.mainard.co.uk)
+&lt;svg viewBox="0 0 496 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"&gt;&lt;/path&gt;&lt;/svg&gt; [chrismainey](https://github.com/chrismainey)
+&lt;svg viewBox="0 0 512 512" style="height:1em;position:relative;display:inline-block;top:.1em;" xmlns="http://www.w3.org/2000/svg"&gt;  &lt;path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"&gt;&lt;/path&gt;&lt;/svg&gt; [chrismainey](witter.com/chrismainey)
+
+]
+
+.pull-right[
+
+&lt;p style="text-align:center;font-weight:bold;"&gt;&lt;img src="man/figures/download.png" style="height:550px;" alt="Picture of Michael Jackson's dance routine for the song 'Smooth Criminal', with the bad "dad-joke": 'You've been hit by a smoothed residual'"&gt;
+&lt;br&gt;
+Don't think about it too hard...😉  &lt;/p&gt;
+
+
+]
+
+.qr1[
+&lt;img src="man/figures/qr1.png" style="height:150px;" alt="QR code https://chrismainey.github.io/fitting_wiggly_data/fitting_wiggly_data.html"&gt;
+]
+
+---
+
+# Regression models on non-linear data
+
++ Regression is a method for predicting a variable, `Y`, using another, `X`
+
+&lt;img src="GAMworkshop_files/figure-html/regression1-1.png" alt="Two-dimensional scatterplot with a range of data points that show the two dimensions are correlated" width="864" style="display: block; margin: auto;" /&gt;
+---
+
+# Equation of a straight line (1)
+
+`$$y= \alpha + \beta x + \epsilon$$`
+
+&lt;img src="GAMworkshop_files/figure-html/regression2-1.png" alt="The same scatter plot from the last slide now has a line of best fit drawn, highlighting where it crosses the vertical axis called the intercept or alpha. For each unit of 1 on the horizontal axis, the vertical axis raises by and amount called a coefficient, or beta." width="864" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+
+# Equation of a straight line (2)
+
+
+`$$y= 2 + 1.5 x + \epsilon$$`
+
+&lt;img src="GAMworkshop_files/figure-html/regression3-1.png" alt="The same scatter plot from the last slide now has a line of best fit drawn, highlighting where it crosses the vertical axis called the intercept or alpha. For each unit of 1 on the horizontal axis, the vertical axis raises by and amount called a coefficient, or beta." width="864" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# What about nonlinear data? (1)
+
+&lt;img src="GAMworkshop_files/figure-html/sig-1.png" alt="The same scatter plot from the first slide with no line of best fit" width="864" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+# What about nonlinear data? (2)
+
+&lt;img src="GAMworkshop_files/figure-html/cats-1.png" alt="The same scatter plot from the first slide with a straight line of best fit." width="864" style="display: block; margin: auto;" /&gt;
+---
+
+# What about nonlinear data? (3)
+
+&lt;img src="GAMworkshop_files/figure-html/cats3-1.png" alt="The same scatter plot from the first slide with boxes for 3 categories added." width="864" style="display: block; margin: auto;" /&gt;
+---
+
+# What about nonlinear data? (4)
+
+&lt;img src="GAMworkshop_files/figure-html/cats4-1.png" alt="The same scatter plot from the first slide with with a smooth sigmoidal shape fitted to the points" width="864" style="display: block; margin: auto;" /&gt;
+---
+
+# What about nonlinear data? (5)
+
+&lt;img src="GAMworkshop_files/figure-html/cats5-1.png" alt="The same scatter plot from the first slide with a straight line, categorical and the a smooth sigmoidal shapes fitted to the points." width="864" style="display: block; margin: auto;" /&gt;
+---
+
+.pull-left[
+
+# Poly - what?
+
++ More complicated mathsy definitions than I can explain, first lets consider powers / orders:
+
+  + Squared ( `\(x^2\)` or `\(x * x\)`)
+
+  + Cubed ( `\(x^3\)` or `\(x * x * x\)`)
+
+&lt;br&gt;&lt;br&gt;
+
+If we use these in regression, we can get something like:
+
+`$$y = a_0 + a_1x + a_2x^2 + ... + a_nx_n$$`
+]
+
+--
+
+.pull-right[
+
+## Problems with polynomials
+
++ Dodgy fit with increased complexity
+
++ Can oscillate wildly, particularly at edges:
+  + [Runge's phenomenon](https://en.wikipedia.org/wiki/Runge%27s_phenomenon#:~:text=In%20the%20mathematical%20field%20of,set%20of%20equispaced%20interpolation%20points.)
+
+
+&lt;p style="text-align:center;"&gt;&lt;a title="Nicoguaro, CC BY 4.0 &amp;lt;https://creativecommons.org/licenses/by/4.0&amp;gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Runge_phenomenon.svg"&gt;&lt;img width="400" alt="Runge phenomenon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Runge_phenomenon.svg/512px-Runge_phenomenon.svg.png"&gt;&lt;/a&gt;&lt;/p&gt;
+
+]
+
+---
+
+# What if we could do something more suitable?
+
+If we could define a set of functions we are happy with:
++ We could use coefficients to 'support' the fit
++ Could use penalties to restrict how much they flex
+
+
+&lt;p style="text-align:center;font-weight:bold;"&gt;&lt;img src="man/figures/basis_functions1.png" style="height:350px;" alt="Example of basis functions for fitting data"&gt;&lt;/p&gt;
+
+.smaller[
+Figure taken from Noam Ross' GAMs in R course, CC-BY, https://github.com/noamross/gams-in-r-course
+]
+
+
+---
+
+# Splines
+
++ How do you (manually) draw a smooth curve?
+
+--
+
+.pull-left[
+
+
+### [Draftsman's spline](https://www.core77.com/posts/55368/When-Splines-Were-Physical-Objects) / ['flat spline'](https://en.wikipedia.org/wiki/Flat_spline)
+
++ Thin flexible strip that bends to curves
+
++ Held in place by weights ("ducks"), nails etc.
+
++ The tension element is important: spline flexes minimally
+
+]
+
+.pull-right[
+
+&lt;p style="text-align:center;"&gt;&lt;a title="Pearson Scott Foresman, Public domain, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Spline_(PSF).png"&gt;&lt;img width="400" alt="Spline (PSF)" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Spline_%28PSF%29.png/512px-Spline_%28PSF%29.png"&gt;&lt;/a&gt;&lt;/p&gt;
+
+]
+
+---
+
+# Mathematical splines
+
++ Smooth, piece-wise polynomials, like a flexible strip for drawing curves.
++ 'Knot points' between each section
+
+&lt;img src="GAMworkshop_files/figure-html/gam1-1.png" alt="Scatter plot from earlier with a wiggly sigmoidal best fit line" width="864" style="display: block; margin: auto;" /&gt;
+
+---
+
+# How smooth?
+
+Can be controlled by number of knots `\((k)\)`, or by a penalty `\(\gamma\)`.
+
+.pull-left[
+&lt;img src="GAMworkshop_files/figure-html/knots2-1.png" alt="Scatter plot from earlier with a wiggly sigmoidal best fit lines for 2, 20 and 50 points" width="432" style="display: block; margin: auto;" /&gt;
+]
+
+.pull-right[
+&lt;img src="GAMworkshop_files/figure-html/penalty-1.png" alt="Scatter plot from earlier with a wiggly sigmoidal best fit lines for 20 knots but differing penalties 0.001, 1 and 10" width="432" style="display: block; margin: auto;" /&gt;
+
+]
+
+---
+
+# Generalized Additive Model
+
++ Regression models where we fit smoothers (like splines) from our data.
++ Strictly additive, but smoothers can describe complex relationships.
++ In our case:
+
+
+`$$y= \alpha + f(x) + \epsilon$$`
+--
+
+&lt;br&gt;
+.smaller[
+Or more formally, an example GAM might be (Wood, 2017):
+]
+
+`$$g(\mu_i) = A_i \theta + f_1(x_1) + f_2(x_{2i}) + f3(x_{3i}, x_{4i}) + ...$$`
+&lt;br&gt;
+Where:
+
+.smaller[
++ `\(\mu_i \equiv \mathbb{E}(Y _i)\)`, the expectation of Y]
+
+.smaller[
++ `\(Yi \sim EF(\mu _i, \phi _i)\)`, `\(Yi\)` is a response variable, distributed according to exponential family distribution with mean `\(\mu _i\)` and shape parameter `\(\phi\)`.]
+
+.smaller[
++ `\(A_i\)` is a row of the model matrix for any strictly parametric model components with `\(\theta\)` the corresponding parameter vector.]
+
+.smaller[
++ `\(f_i\)` are smooth functions of the covariates, `\(xk\)`, where `\(k\)` is each function basis.]
+
+
+---
+# What does that mean for me?
+
++ Can build regression models with smoothers, particularly suited to non-linear, or noisy data
+
++ _Hastie (1985)_ used knot every point, _Wood (2017)_ uses reduced-rank version
+
+
+--
+
+&lt;br&gt;
+
+# mgcv: mixed gam computation vehicle
+
++ Prof. Simon Wood's package, pretty much the standard
++ Included in standard `R` distribution, used in `ggplot2` `geom_smooth` etc.
+
+--
+
+
+```r
+library(mgcv)
+
+my_gam &lt;- gam(Y ~ s(X, bs="cr"), data=dt)
+```
+
++ `s()` controls smoothers (and other options, `t`, `ti`)
++ `bs="cr"` telling it to use cubic regression spline ('basis')
++ Default determined from data, but you can alter this e.g. (`k=10`)
+---
+
+# Model Output:
+
+```r
+summary(my_gam)
+```
+
+```
+## 
+## Family: gaussian 
+## Link function: identity 
+## 
+## Formula:
+## Y ~ s(X, bs = "cr")
+## 
+## Parametric coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  43.9659     0.8305   52.94   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Approximate significance of smooth terms:
+##        edf Ref.df     F p-value    
+## s(X) 6.087  7.143 296.3  &lt;2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## R-sq.(adj) =  0.876   Deviance explained = 87.9%
+## GCV = 211.94  Scale est. = 206.93    n = 300
+```
+
+
+---
+# Check your model:
+
+
+```r
+gam.check(my_gam)
+```
+
+&lt;img src="GAMworkshop_files/figure-html/gam3a-1.png" width="864" style="display: block; margin: auto;" /&gt;
+
+```
+## 
+## Method: GCV   Optimizer: magic
+## Smoothing parameter selection converged after 4 iterations.
+## The RMS GCV score gradient at convergence was 1.107369e-05 .
+## The Hessian was positive definite.
+## Model rank =  10 / 10 
+## 
+## Basis dimension (k) checking results. Low p-value (k-index&lt;1) may
+## indicate that k is too low, especially if edf is close to k'.
+## 
+##        k'  edf k-index p-value
+## s(X) 9.00 6.09     1.1    0.97
+```
+
+---
+# Check your model:
+
+
+```r
+gam.check(my_gam)
+```
+
+
+```
+## 
+## Method: GCV   Optimizer: magic
+## Smoothing parameter selection converged after 4 iterations.
+## The RMS GCV score gradient at convergence was 1.107369e-05 .
+## The Hessian was positive definite.
+## Model rank =  10 / 10 
+## 
+## Basis dimension (k) checking results. Low p-value (k-index&lt;1) may
+## indicate that k is too low, especially if edf is close to k'.
+## 
+##        k'  edf k-index p-value
+## s(X) 9.00 6.09     1.1    0.93
+```
+
+---
+
+# Is it any better than linear model?
+
+
+```r
+my_lm &lt;- lm(Y ~ X, data=dt)
+
+anova(my_lm, my_gam)
+```
+
+```
+## Analysis of Variance Table
+## 
+## Model 1: Y ~ X
+## Model 2: Y ~ s(X, bs = "cr")
+##   Res.Df   RSS     Df Sum of Sq      F    Pr(&gt;F)    
+## 1 298.00 88154                                      
+## 2 292.91 60613 5.0873     27540 26.161 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+```r
+AIC(my_lm, my_gam)
+```
+
+```
+##              df      AIC
+## my_lm  3.000000 2562.280
+## my_gam 8.087281 2460.085
+```
+
+--
+
+## Yes, yes it is!
+
+---
+
+# Summary
+
++ Regression models are concerned with explaining one variable: `y`, with another: `x`
+
++ This relationship is assumed to be linear
+
++ If your data are not linear, or noisy, a smoother might be appropriate
+
+--
+
++ Splines are ideal smoothers, and are polynomials joined at 'knot' points
+
+--
+
++ GAMs are a framework for regressions using smoothers
+
+--
+
++ `mgcv` is a great package for GAMs with various smoothers available
+
++ `mgcv` estimates the required smoothing penalty for you
+
++ `gratia` or `mgcViz` packages are good visualization tool for GAMs
+
+---
+# References and Further reading:
+
+#### GitHub code: 
+https://github.com/chrismainey/fitting_wiggly_data
+
+
+
+#### Simon Wood's comprehensive book:
++ WOOD, S. N. 2017. Generalized Additive Models: An Introduction with R, Second Edition, Florida, USA, CRC Press.
+
+
+
+#### Noam Ross free online GAM course:
+https://noamross.github.io/gams-in-r-course/
+
+&lt;br&gt;
+
++ HARRELL, F. E., JR. 2001. Regression Modeling Strategies, New York, Springer-Verlag New York.
+
++ HASTIE, T. &amp; TIBSHIRANI, R. 1986. Generalized Additive Models. Statistical Science, 1, 297-310. 291
+
++ HASTIE, T., TIBSHIRANI, R. &amp; FRIEDMAN, J. 2009. The Elements of Statistical Learning : Data Mining, Inference, and Prediction, New York, NETHERLANDS, Springer.
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false,
+"slideNumberFormat": "%current%",
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
