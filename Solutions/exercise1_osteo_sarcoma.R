@@ -170,6 +170,20 @@ summary(sarcoma_gam1)
 # Plot the results
 plot(sarcoma_gam1, residuals = TRUE, pch = 1)
 
+# Can also use alternatives like `gratia` or mgcVis packages:
+
+# https://gavinsimpson.github.io/gratia/index.html
+gratia::draw(sarcoma_gam1, residuals = TRUE)
+
+library(mgcViz)
+# https://mfasiolo.github.io/mgcViz/articles/mgcviz.html
+b <- mgcViz::getViz(sarcoma_gam1)
+
+o <- plot( sm(b, 1) )
+o + l_fitLine(colour = "red") + l_rug(mapping = aes(x=x, y=y), alpha = 0.8) +
+  l_ciLine(mul = 5, colour = "blue", linetype = 2) +
+  l_points(shape = 19, size = 1, alpha = 0.1) + theme_classic()
+
 
 
 # Extract the model coefficients with `coef` function.  How many are there for basis functions that make up this smooth?
