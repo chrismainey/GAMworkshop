@@ -24,3 +24,9 @@ the following links:
 
 They are really good, and you’ll find out more about GAMs using them
 than my workshop will cover.
+
+The course material in this course is licensed CC-BY, meaning you are
+free to use it, change it etc. as long as you attribute the original
+workshop to me, and I in turn attribute the source material and
+inspiration to Noam Ross. You can view the slides at:
+<https://chrismainey.github.io/whats_overdispersion/presentation.html>
