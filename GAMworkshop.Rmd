@@ -71,19 +71,17 @@ label= c("1", "\u03B2", "\u03B1" ))
 .pull-left[
 
 <br><br><br>
-<br><br>
 
-# Fitting Wiggly Data
-### Why `mgcv` is awesome
+# Modelling non-linear data with Generalized Additive Models (GAMs)
+### Using the `mgcv` package
 
 <br><br>
-<br><br>
+<br>
 
 `r icons::icon_style(icons::fontawesome("envelope"))` [c.mainey1@nhs.net](mailto:c.mainey1@nhs.net)
-`r icons::icon_style(icons::fontawesome("globe"))` [mainard.co.uk](https://www.mainard.co.uk)
 `r icons::icon_style(icons::fontawesome("github"))` [chrismainey](https://github.com/chrismainey)
-`r icons::icon_style(icons::fontawesome("twitter"))` [chrismainey](witter.com/chrismainey)
-
+`r icons::icon_style(icons::fontawesome("linkedin"), fill = "#005EB8")`  [chrismainey](https://www.linkedin.com/in/chrismainey/)
+`r icons::icon_style(icons::fontawesome("orcid"), fill = "#005EB8")` [0000-0002-3018-6171](https://orcid.org/0000-0002-3018-6171)
 ]
 
 .pull-right[
@@ -93,10 +91,6 @@ label= c("1", "\u03B2", "\u03B1" ))
 Don't think about it too hard...`r emo::ji("wink")`  </p>
 
 
-]
-
-.qr1[
-<img src="man/figures/qr1.png" style="height:150px;" alt="QR code https://chrismainey.github.io/fitting_wiggly_data/fitting_wiggly_data.html">
 ]
 
 ---
@@ -270,7 +264,7 @@ ggplot(dt, aes(y=Y, x=X))+
 
 If we use these in regression, we can get something like:
 
-$$y = a_0 + a_1x + a_2x^2 + ... + a_nx_n$$
+$$y = \alpha + \beta_1x + \beta_2x^2 + \beta_3x^3... + \beta_nx_n^z$$
 ]
 
 --
@@ -285,9 +279,54 @@ $$y = a_0 + a_1x + a_2x^2 + ... + a_nx_n$$
   + [Runge's phenomenon](https://en.wikipedia.org/wiki/Runge%27s_phenomenon#:~:text=In%20the%20mathematical%20field%20of,set%20of%20equispaced%20interpolation%20points.)
 
 
-<p style="text-align:center;"><a title="Nicoguaro, CC BY 4.0 &lt;https://creativecommons.org/licenses/by/4.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Runge_phenomenon.svg"><img width="400" alt="Runge phenomenon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Runge_phenomenon.svg/512px-Runge_phenomenon.svg.png"></a></p>
+<p style="text-align:center;"><a title="Nicoguaro, CC BY 4.0 &lt;https://creativecommons.org/licenses/by/4.0&gt;, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Runge_phenomenon.svg"><img width="400" alt="Runge phenomenon" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Runge_phenomenon.svg/512px-Runge_phenomenon.svg.png"; alt = "Chart of the shape of polynomial function, oscillation at the edges as the order of the function increases, demonstrating Runges Phenomenon"></a></p>
 
 ]
+
+---
+
+# Degrees of freedom (df)
+
+Within a model, how many 'parts' are free to vary?
+
+E.g. If we have 3 numbers and we know the average is 5:
+
+If we have 2 and 7, our final number is not free to vary.
+It must be 6:
+$$ \frac{2 + 7 + 6}{3} = 5$$
+This means our 'model' is constrained to $n-1$ degrees of freedom
+
+
+--
+
+## In regression context:
+
++ The number of data points in our model ( $N$ ) limits the df
++ Usually the number of predictors ( $k$ ) in our model is considered the df (one of these is the intercept)
++ "Residual df" are points left to vary in the model, after considering the df:
+
+$$N-k-1$$
+Helpful post on [CrossValidated](https://stats.stackexchange.com/questions/340007/confused-about-residual-degree-of-freedom)
+
+---
+
+# Overfitting
+
+ > When our model fits both the underlying relationship and the 'noise' percuiliar to our sample data
+ 
+ + You want to fit the relationship, whilst minimising the noise.
+ 
+ + This helps 'generalizability': meaning it will predict well on new data.
+ 
+
+If we allowed total freedom in our model, e.g. a knot at every data point. What would happen?
+
+---
+class: middle
+
+# Exercise 1: Load and fit non-linear relationship
+Here we will visualise the relationship, view it as a linear regression, and attempt a polynomial fit.
+
 
 ---
 
@@ -328,7 +367,7 @@ Figure taken from Noam Ross' GAMs in R course, CC-BY, https://github.com/noamros
 
 .pull-right[
 
-<p style="text-align:center;"><a title="Pearson Scott Foresman, Public domain, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Spline_(PSF).png"><img width="400" alt="Spline (PSF)" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Spline_%28PSF%29.png/512px-Spline_%28PSF%29.png"></a></p>
+<p style="text-align:center;"><a title="Pearson Scott Foresman, Public domain, via Wikimedia Commons" href="https://commons.wikimedia.org/wiki/File:Spline_(PSF).png"><img width="400" alt="Spline (PSF)" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Spline_%28PSF%29.png/512px-Spline_%28PSF%29.png"; alt = "Drawing of a draftsman bending a flexible piece of wood and using it to draw a smooth curve."></a> </p>
 
 ]
 
@@ -345,6 +384,7 @@ ggplot(dt, aes(y=Y, x=X))+
   geom_point(size=1.5, alpha=0.4)+
   geom_smooth(aes(col="A"), method = "lm", formula = y~ns(x,10), se=FALSE, size=1.2, show.legend = FALSE)
 ```
+
 
 ---
 
@@ -450,7 +490,6 @@ Where:
 .smaller[
 + $f_i$ are smooth functions of the covariates, $xk$, where $k$ is each function basis.]
 
-
 ---
 # What does that mean for me?
 
@@ -458,15 +497,33 @@ Where:
 
 + _Hastie (1985)_ used knot every point, _Wood (2017)_ uses reduced-rank version
 
-
 --
 
+## Issues
+
++ We need to chose the right _dimension_ (degrees of freedom / knots) for our smoothers
++ We need to chose the right penalty ($\lambda$) for our smoothers
+
+### Consequence
+
++ If you penalise a smooth of $k$ dimensions, it no longer has $k-1$ degrees of freedom as they are reduced
++ 'Effective degrees of freedom' - the penalized df of the predictors in the model.
+
+__Note:__
 <br>
+$df(\lambda) = k$, when $\lambda = 0$ 
+<br>
+$df(\lambda) \rightarrow 0$, when $\lambda \rightarrow \infty$ 
+
+
+---
 
 # mgcv: mixed gam computation vehicle
 
 + Prof. Simon Wood's package, pretty much the standard
 + Included in standard `R` distribution, used in `ggplot2` `geom_smooth` etc.
++ Has sensible defaults for dimensions
++ Estimates the ideal penalty for smooths by various methods, with REML recommended.
 
 --
 
@@ -479,6 +536,7 @@ my_gam <- gam(Y ~ s(X, bs="cr"), data=dt)
 + `s()` controls smoothers (and other options, `t`, `ti`)
 + `bs="cr"` telling it to use cubic regression spline ('basis')
 + Default determined from data, but you can alter this e.g. (`k=10`)
++ Penalty (smoothing parameter) estimation method is set to (`REML`)
 ---
 
 # Model Output:
@@ -526,6 +584,37 @@ AIC(my_lm, my_gam)
 ## Yes, yes it is!
 
 ---
+class: middle
+
+# Exercise 2: Simple GAM fit
+We will now fit the same relationship with a GAM using the  `mgcv` package.
+
+---
+class: middle
+
+# Exercise 3: GAM fitting options
+We will now look at varying the fit using things like the degrees of freedom and penalty.
+We will also visualise these changes and effects on models.
+
+---
+class: middle
+
+# Exercise 4: Multivariable GAMs
+We will now generalise to include more than one predictor / smooth function, how they might be combined, and effects on models.  We will also progress on to a generalised linear model, using a distribution family
+
+---
+class: middle
+
+# Break
+
+---
+class: middle
+
+# Exercise 5: Put it all together!
+We will now apply what we've learnt to the Framingham cohort study, predicting the binary variable: 'TenYearCHD' using other columns.  See how you can use smoothers on th econtinuous variables to get the best fit possible.
+___Hint:___ you will need to use AIC or auc to compare models, not R2.
+
+---
 
 # Summary
 
@@ -555,8 +644,7 @@ AIC(my_lm, my_gam)
 # References and Further reading:
 
 #### GitHub code: 
-https://github.com/chrismainey/fitting_wiggly_data
-
+https://github.com/chrismainey/GAMworkshop
 
 
 #### Simon Wood's comprehensive book:

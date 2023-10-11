@@ -85,7 +85,9 @@ plot(sarcoma_gam8, residuals = TRUE, pch = 1)
 plot(sarcoma_gam9, residuals = TRUE, pch = 1)
 
 # The higher penalties reduce the 'wiggliness'
-
+# Extreme:
+sarcoma_gam7a <- gam(Male.Rates ~ s(Age, bs="cr", k=12),data=sarcoma, sp=1e12)
+plot(sarcoma_gam7a, residuals = TRUE, pch = 1)
 
 ############################################################
 # Model fitting and diagnostics
@@ -119,3 +121,5 @@ check.gamViz(getViz(sarcoma_gam10))
 
 # mgcv has functions already for some of diagnostics
 qq.gam(sarcoma_gam10, pch=1)
+
+

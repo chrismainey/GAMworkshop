@@ -159,7 +159,9 @@ img, video, iframe {
 }
 blockquote {
   border-left: solid 5px #23395b80;
+  background-color: #e0e0e0 ;
   padding-left: 1em;
+  padding: 0.05rem;
 }
 .remark-slide table {
   margin: auto;

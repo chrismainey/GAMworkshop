@@ -20,7 +20,7 @@ sarcoma <- read_csv("./data/sarcoma.csv", name_repair = "universal")
 
 
 
-######## Part 1: Linear regression with single predictor  ##########
+###################### Part 1: Linear regression with a single predictor  ######################################
 
 # With the Sarcoma data, we will examine the relationship between age and incidence
 # Pick either the Male or Female reporting category and lets consider the number of Cases
@@ -36,10 +36,18 @@ View(sarcoma)
 
 library(ggplot2)
 ggplot(sarcoma, aes(x=Age, y=Male.Cases))+
-  geom_col(fill="green2", col=1, alpha=0.5)+
+  geom_col(fill="firebrick", col=1, alpha=0.5)+
   labs(title="Incidence of Osteosarcoma in UK Males, 2016 - 2018", subtitle="Source: Cancer Research UK")+
   theme_minimal()+
   theme(plot.subtitle = element_text(face="italic"))
+
+ggplot(sarcoma, aes(x=Age, y=Female.Cases))+
+  geom_col(fill="orange2", col=1, alpha=0.5)+
+  labs(title="Incidence of Osteosarcoma in UK Females, 2016 - 2018", subtitle="Source: Cancer Research UK")+
+  theme_minimal()+
+  theme(plot.subtitle = element_text(face="italic"))
+
+
 
 
 # Does the number of cases appear related to age?  -  Some increasing relationship
@@ -50,7 +58,13 @@ ggplot(sarcoma, aes(x=Age, y=Male.Cases))+
 # Try the same with the rate to see if population size clouds it.
 
 ggplot(sarcoma, aes(x=Age, y=Male.Rates))+
-  geom_col(fill="dodgerblue2", col=1, alpha=0.5)+
+  geom_col(fill="mediumpurple4", col=1, alpha=0.5)+
+  labs(title="Incidence Rate of Osteosarcoma in UK Males, 2016 - 2018", subtitle="Source: Cancer Research UK")+
+  theme_minimal()+
+  theme(plot.subtitle = element_text(face="italic"))
+
+ggplot(sarcoma, aes(x=Age, y=Female.Rates))+
+  geom_col(fill="mediumaquamarine", col=1, alpha=0.5)+
   labs(title="Incidence Rate of Osteosarcoma in UK Males, 2016 - 2018", subtitle="Source: Cancer Research UK")+
   theme_minimal()+
   theme(plot.subtitle = element_text(face="italic"))
@@ -64,7 +78,7 @@ ggplot(sarcoma, aes(x=Age, y=Male.Rates))+
 
 
 
-#################################################
+################################################################################################################
 # Modelling the rate in Males.
 
 # Build a linear regression model (lm) to examine it using the summary function
@@ -77,7 +91,7 @@ summary(sarcoma_lm)
 # Let's visualise it using ggplots 'geom_smooth', giving it the method = lm
 
 ggplot(sarcoma, aes(x=Age, y=Male.Rates))+
-  geom_col(fill="dodgerblue2", col=1, alpha=0.5)+
+  geom_col(fill="mediumpurple4", col=1, alpha=0.5)+
   geom_smooth(col="red", method = "lm") +
   labs(title="Incidence Rate of Osteosarcoma in UK Males, 2016 - 2018", subtitle="Source: Cancer Research UK")+
   theme_minimal()+
@@ -87,7 +101,8 @@ ggplot(sarcoma, aes(x=Age, y=Male.Rates))+
 # Examine this plot.  Is the model a good fit?
 # Is it good for any of the range?
 
-#################################################
+
+#################################################################################################################
 
 # Let's try and do this with a polynomial term or two: Age + Age^2 + Age^3
 # You can manually do it, or use the poly() function, which helps reduce correlation
@@ -101,7 +116,7 @@ summary(sarcoma_lm_poly)
 # Visualise this again with ggplot geom_smooth.  Add the argument: formula = "y ~ naturalSpline(x)", including your options
 
 ggplot(sarcoma, aes(x=Age, y=Male.Rates))+
-  geom_col(fill="dodgerblue2", col=1, alpha=0.5)+
+  geom_col(fill="mediumpurple4", col=1, alpha=0.5)+
   geom_smooth(col="red", method = "lm", formula = "y ~ poly(x,degree=4)") +
   labs(title="Incidence Rate of Osteosarcoma in UK Males, 2016 - 2018", subtitle="Source: Cancer Research UK")+
   theme_minimal()+
@@ -139,7 +154,7 @@ summary(sarcoma_lm_spline2)
 # Visualise this again with ggplot geom_smooth.  Add the argument: formula = "y ~ naturalSpline(x)", including your options
 
 ggplot(sarcoma, aes(x=Age, y=Male.Rates))+
-  geom_col(fill="dodgerblue2", col=1, alpha=0.5)+
+  geom_col(fill="mediumpurple4", col=1, alpha=0.5)+
   geom_smooth(col="red", method = "lm", formula = "y ~ naturalSpline(x, df=4)") +
   labs(title="Incidence Rate of Osteosarcoma in UK Males, 2016 - 2018", subtitle="Source: Cancer Research UK")+
   theme_minimal()+
@@ -147,7 +162,7 @@ ggplot(sarcoma, aes(x=Age, y=Male.Rates))+
 
 
 ggplot(sarcoma, aes(x=Age, y=Male.Rates))+
-  geom_col(fill="dodgerblue2", col=1, alpha=0.5)+
+  geom_col(fill="mediumpurple4", col=1, alpha=0.5)+
   geom_smooth(col="red", method = "lm", formula = "y ~ naturalSpline(x,  knots= c(24,49,79))") +
   labs(title="Incidence Rate of Osteosarcoma in UK Males, 2016 - 2018", subtitle="Source: Cancer Research UK")+
   theme_minimal()+

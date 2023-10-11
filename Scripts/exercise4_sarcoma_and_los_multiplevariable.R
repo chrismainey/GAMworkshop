@@ -176,4 +176,6 @@ concurvity(gam_death2, full = TRUE)
 
 concurvity(gam_death2, full = FALSE)
 
+# Is there a problem with concuirvity here?
+
 

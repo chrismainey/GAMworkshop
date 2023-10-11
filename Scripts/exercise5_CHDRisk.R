@@ -32,46 +32,8 @@ framingham <- read.csv("./data/framingham.csv")
 
 library(mgcv)
 
-CHDrisk <- gam(TenYearCHD ~  factor(male)
-               + factor(currentSmoker)
-               + s(age)
-               + s(glucose)
-               + s(sysBP, diaBP)
-               + factor(diabetes)
-               + factor(prevalentStroke)
-               + factor(prevalentHyp)
-               + s(totChol)
+CHDrisk <- gam(TenYearCHD ~  # enter your model terms here
                , data = framingham
                , family = "binomial"
                , metho = "REML")
 
-CHDrisk2 <- gam(TenYearCHD ~  factor(male)
-               + factor(currentSmoker)
-               + s(age)
-               + s(glucose)
-               + s(sysBP)
-               + s(diaBP)
-               + factor(diabetes)
-               + factor(prevalentStroke)
-               + factor(prevalentHyp)
-               + s(totChol)
-               , data = framingham
-               , family = "binomial"
-               , metho = "REML")
-
-
-
-gam.check(CHDrisk)
-gam.check(CHDrisk2)
-
-library(gratia)
-appraise(CHDrisk)
-
-gratia::draw(CHDrisk)
-
-ModelMetrics::auc(CHDrisk)
-summary(CHDrisk)
-
-# Change of 4 ~ asymptotic to 95% significant
-AIC(CHDrisk)
-AIC(CHDrisk2)
