@@ -611,7 +611,7 @@ class: middle
 class: middle
 
 # Exercise 5: Put it all together!
-We will now apply what we've learnt to the Framingham cohort study, predicting the binary variable: 'TenYearCHD' using other columns.  See how you can use smoothers on th econtinuous variables to get the best fit possible.
+We will now apply what we've learnt to the Framingham cohort study, predicting the binary variable: 'TenYearCHD' using other columns.  See how you can use smoothers on the continuous variables to get the best fit possible.
 ___Hint:___ you will need to use AIC or auc to compare models, not R2.
 
 ---
