@@ -426,26 +426,26 @@ ggplot(dt, aes(y=Y, x=X))+
 
 .pull-right[
 ```{r penalty, echo=FALSE, message=FALSE, warning=FALSE, fig.width=6, fig.alt="Scatter plot from earlier with a wiggly sigmoidal best fit lines for 20 knots but differing penalties 0.001, 1 and 10"}
-########### Use gam sim for sigmoid and show difference in lambda ###############
+########### Use gam sim for sigmoid and show difference in gamma ###############
 
-smsp<-gam(Y~s(X, bs="cr", k=20), data=dt, gamma=0.001)
+smsp<-gam(Y~s(X, bs="cr", k=20), data=dt, sp=1)
 dt$sp1<-predict(smsp, type="response")
 
-smsp2<-gam(Y~s(X, bs="cr", k=20), data=dt, gamma = 1 )
+smsp2<-gam(Y~s(X, bs="cr", k=20), data=dt, sp = 10 )
 dt$sp2<-predict(smsp2, type="response")
 
-smsp3<-gam(Y~s(X, bs="cr", k=20), data=dt, gamma = 10)
+smsp3<-gam(Y~s(X, bs="cr", k=20), data=dt, sp = 100)
 dt$sp3<-predict(smsp3, type="response")
 
 
 #dt$sp1<-NULL
 ggplot(dt, aes(y=Y, x=X))+
   geom_point(alpha=0.4)+
-  geom_line(aes(y=sp1, x=X, col="0.001"), size=1.2)+
-  geom_line(aes(y=sp2, x=X, col="1"), size=1.2)+
-  geom_line(aes(y=sp3, x=X, col="10"), size=1.2)+
+  geom_line(aes(y=sp1, x=X, col="1"), size=1.2)+
+  geom_line(aes(y=sp2, x=X, col="10"), size=1.2)+
+  geom_line(aes(y=sp3, x=X, col="100"), size=1.2)+
   scale_color_manual(values = c("#5DDEDE", "#FAD74B" ,"#FA6767"),
-                     labels= factor(x=c("A", "B", "C"), levels=c("A", "B", "C"), labels=c("0.001", "1", "10"), ordered=TRUE)
+                     labels= factor(x=c("A", "B", "C"), levels=c("A", "B", "C"), labels=c("1", "10", "100"), ordered=TRUE)
                      , name="Penalty (\u03B3)")+
   ggtitle("Varying smoothness penalty (20 knots)")+
     theme(legend.title = element_text(face="bold", size=09),
@@ -502,7 +502,7 @@ Where:
 ## Issues
 
 + We need to chose the right _dimension_ (degrees of freedom / knots) for our smoothers
-+ We need to chose the right penalty ($\lambda$) for our smoothers
++ We need to chose the right penalty ( $\lambda$ ) for our smoothers
 
 ### Consequence
 
