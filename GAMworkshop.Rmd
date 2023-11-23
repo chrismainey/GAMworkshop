@@ -81,7 +81,7 @@ label= c("1", "\u03B2", "\u03B1" ))
 `r icons::icon_style(icons::fontawesome("envelope"))` [c.mainey1@nhs.net](mailto:c.mainey1@nhs.net)
 `r icons::icon_style(icons::fontawesome("github"))` [chrismainey](https://github.com/chrismainey)
 `r icons::icon_style(icons::fontawesome("linkedin"), fill = "#005EB8")`  [chrismainey](https://www.linkedin.com/in/chrismainey/)
-`r icons::icon_style(icons::fontawesome("orcid"), fill = "#005EB8")` [0000-0002-3018-6171](https://orcid.org/0000-0002-3018-6171)
+`r icons::icon_style(icons::fontawesome("orcid"), fill = "#A6CE39")` [0000-0002-3018-6171](https://orcid.org/0000-0002-3018-6171)
 ]
 
 .pull-right[
