@@ -48,7 +48,7 @@ plot(sarcoma_gam2, residuals = TRUE, pch = 1)
 
 
 # Now, using the help, try and specify 'k' the dimension of the bases.
-# This is slighlt different for each smoother type, and it is the same as 'df' in the earlier
+# This is slight different for each smoother type, and it is the same as 'df' in the earlier
 # example using naturalSpline()'.  Try 3,6,9 and 12, and visualise each.
 
 sarcoma_gam3 <- gam(Male.Rates ~ s(Age, bs="cr", k=3),data=sarcoma)
@@ -102,7 +102,7 @@ plot(sarcoma_gam7a, residuals = TRUE, pch = 1)
 ?choose.k
 
 
-sarcoma_gam10 <-  gam(Male.Rates ~ s(Age, bs=), method = "REML", data=sarcoma)
+sarcoma_gam10 <-  gam(Male.Rates ~ s(Age, bs="cr"), method = "REML", data=sarcoma)
 
 plot(sarcoma_gam10, residuals = TRUE, pch = 1)
 

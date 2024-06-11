@@ -148,7 +148,7 @@ sarcoma_lm_spline2 <- lm(Male.Rates ~ naturalSpline(Age, knots= c(24,49,79)),dat
 
 summary(sarcoma_lm_spline2)
 
-# Has the model improved? - Yes, drastically. R-squarred practically doubled.
+# Has the model improved? - Yes, drastically. R-squared practically doubled.
 
 
 # Visualise this again with ggplot geom_smooth.  Add the argument: formula = "y ~ naturalSpline(x)", including your options

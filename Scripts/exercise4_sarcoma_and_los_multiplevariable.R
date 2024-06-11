@@ -9,6 +9,8 @@
 library(readr)
 library(ggplot2)
 library(mgcv)
+library(dplyr)
+library(tidyr)
 sarcoma <- read_csv("./data/sarcoma.csv", name_repair = "universal")
 
 # Columns in the data are:
@@ -32,13 +34,13 @@ sarcoma_pivot <-
 # Let's test for an interaction:  age might not independent of sex, due to life expectancy.
 summary(lm(value ~ Age+Sex, data=sarcoma_pivot))
 summary(lm(value ~ Age*Sex, data=sarcoma_pivot))
-# The effect is not 'signficant' at 95%, but it has improved the R^2.  The lack of signficant is likely
+# The effect is not 'significant' at 95%, but it has improved the R^2.  The lack of significant is likely
 # due to the small dataset used.
 
 
 
 ########################################################################
-# Representing interactions in a gam: categorical)
+# Representing interactions in a gam: categorical
 
 # No interaction
 sarcoma_gam11 <- gam(value ~ s(Age) + Sex , data=sarcoma_pivot)
@@ -55,15 +57,13 @@ vis.gam(sarcoma_gam12 , theta = 260, plot.type = "persp")
 
 
 
-
 ######################################################
 # "Generalized"  applied to a binary outcome
 #####################################################
 # we will now predict the 'Death' variable from the LOS_model data set in the NHSRdatasets package
-# We wil use two other columns age and LOS.  Again we will look at interactions here, and another
+# We will use two other columns age and LOS.  Again we will look at interactions here, and another
 # way to represent this in a GAM.
 
-library(tidyverse)
 library(NHSRdatasets)
 
 data("LOS_model")
@@ -97,6 +97,7 @@ gam_death <- gam(Death ~ s(Age) + s(LOS), family = "binomial", data = LOS_model,
 
 AIC(glm_death)
 AIC(gam_death)
+
 
 library(ModelMetrics)
 auc(glm_death)
@@ -146,6 +147,7 @@ summary(gam_death3)
 
 AIC(glm_death2)
 AIC(gam_death2)
+AIC(gam_death3)
 
 
 gam.check(gam_death2)
@@ -161,21 +163,5 @@ vis.gam(x = gam_death2, plot.type = "persp")
 vis.gam(x = gam_death2, plot.type = "persp", view = c("Age","LOS"))
 
 
-################################
-# Concurvity
-
-#With GAMs, we have an additional potential pitfall. Even if two variables aren't collinear,
-#they may have concurvity, that is, one may be a smooth curve of another.
-#For instance, on the left, we have two covariates, X1 and X2, that are not linearly related but
-# form a perfect parabola. If we use both X1 and X2 as predictors in a model, we get smooths
-# with wild confidence intervals, as shown in the middle and right plots.
-
-concurvity(gam_death, full = TRUE)
-
-concurvity(gam_death2, full = TRUE)
-
-concurvity(gam_death2, full = FALSE)
-
-# Is there a problem with concuirvity here?
 
 

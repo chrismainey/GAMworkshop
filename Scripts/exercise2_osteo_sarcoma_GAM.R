@@ -65,11 +65,11 @@ anova(sarcoma_gam1)
 # Both show the pooled significance of the whole smoother.
 
 # Predict and fit manually:
-# We'll create a colmn called 'gam1_preds' for the predictions in our original data frame
+# We'll create a column called 'gam1_preds' for the predictions in our original data frame
 
 sarcoma$gam1_preds <- predict(sarcoma_gam1, newdata = sarcoma)
 
-# also compare to predctions fomr our original model
+# also compare to predictions form our original model
 
 sarcoma$lm_preds <- predict(sarcoma_lm, newdata = sarcoma)
 sarcoma$lm_poly_preds <- predict(sarcoma_lm_poly, newdata = sarcoma)
@@ -78,7 +78,8 @@ ggplot(sarcoma, aes(y=Male.Rates))+
   geom_point(aes(x=gam1_preds), col="mediumpurple")+
   geom_point(aes(x=lm_preds), col="mediumaquamarine")+
   geom_point(aes(x=lm_poly_preds), col="orange2")+
-  geom_abline(intercept=0, slope=1, col="red")
+  geom_abline(intercept=0, slope=1, col="red") +
+  theme_minimal()
 
 # In general, purple points (gam) are closer to the line (perfect prediction) compared to the regular lm.
 # Lets sum up the residual error, squaring it so +/- don't cancel.
