@@ -86,7 +86,7 @@ plot(sarcoma_gam9, residuals = TRUE, pch = 1)
 
 # The higher penalties reduce the 'wiggliness'
 # Extreme:
-sarcoma_gam7a <- gam(Male.Rates ~ s(Age, bs="cr", k=12),data=sarcoma, sp=1e12)
+sarcoma_gam7a <- gam(Male.Rates ~ s(Age, bs="cr", k=12),data=sarcoma, sp=1e6)
 plot(sarcoma_gam7a, residuals = TRUE, pch = 1)
 
 ############################################################
@@ -96,7 +96,7 @@ plot(sarcoma_gam7a, residuals = TRUE, pch = 1)
 # Moving back to our first model, let's use mgcv's automatic fitting tools.
 # It sets a default dimension to k=10, and estimated the required penalty.
 # We'll check that the dimension, k is large enough, using the
-# use the method option 'REML' =
+# use the method option 'REML'
 
 
 ?choose.k
@@ -110,13 +110,16 @@ library('gratia')
 draw(sarcoma_gam10, residuals = TRUE)
 
 
-# let's check the dimensions
+### Model checking
+# let's check the dimensions of smooths
 
 gam.check(sarcoma_gam10)
 
-# gratia
+# Model checks
+# using gratia
 appraise(sarcoma_gam10)
-# usin mgcViz
+
+# using mgcViz
 check.gamViz(getViz(sarcoma_gam10))
 
 # mgcv has functions already for some of diagnostics

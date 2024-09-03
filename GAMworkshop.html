@@ -4,7 +4,7 @@
     <title>GAMworkshop</title>
     <meta charset="utf-8" />
     <meta name="author" content="Chris Mainey" />
-    <meta name="date" content="2023-11-23" />
+    <meta name="date" content="2024-09-03" />
     <script src="libs/header-attrs/header-attrs.js"></script>
     <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
   </head>
@@ -170,7 +170,7 @@ If we allowed total freedom in our model, e.g. a knot at every data point. What 
 ---
 class: middle
 
-# Exercise 1: Load and fit non-linear relationship
+# Exercise 1a: Load and fit non-linear relationship
 Here we will visualise the relationship, view it as a linear regression, and attempt a polynomial fit.
 
 
@@ -244,6 +244,15 @@ Can be controlled by number of knots `\((k)\)`, or by a penalty `\(\gamma\)`.
 
 ---
 
+class: middle
+
+# Exercise 1b: Fitting a spline to our data
+We will now use a spline function to trace the relationship in our data, through a regression, and plot it.
+
+---
+
+---
+
 # Generalized Additive Model
 
 + Regression models where we fit smoothers (like splines) from our data.
@@ -313,7 +322,7 @@ __Note:__
 --
 
 
-```r
+``` r
 library(mgcv)
 
 my_gam &lt;- gam(Y ~ s(X, bs="cr"), data=dt)
@@ -327,7 +336,7 @@ my_gam &lt;- gam(Y ~ s(X, bs="cr"), data=dt)
 
 # Model Output:
 
-```r
+``` r
 summary(my_gam)
 ```
 
@@ -360,7 +369,7 @@ summary(my_gam)
 # Check your model:
 
 
-```r
+``` r
 gam.check(my_gam)
 ```
 
@@ -385,7 +394,7 @@ gam.check(my_gam)
 # Check your model:
 
 
-```r
+``` r
 gam.check(my_gam)
 ```
 
@@ -410,7 +419,7 @@ gam.check(my_gam)
 # Is it any better than linear model?
 
 
-```r
+``` r
 my_lm &lt;- lm(Y ~ X, data=dt)
 
 anova(my_lm, my_gam)
@@ -428,7 +437,7 @@ anova(my_lm, my_gam)
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-```r
+``` r
 AIC(my_lm, my_gam)
 ```
 
@@ -448,18 +457,6 @@ class: middle
 # Exercise 2: Simple GAM fit
 We will now fit the same relationship with a GAM using the  `mgcv` package.
 
----
-class: middle
-
-# Exercise 3: GAM fitting options
-We will now look at varying the fit using things like the degrees of freedom and penalty.
-We will also visualise these changes and effects on models.
-
----
-class: middle
-
-# Exercise 4: Multivariable GAMs
-We will now generalise to include more than one predictor / smooth function, how they might be combined, and effects on models.  We will also progress on to a generalised linear model, using a distribution family
 
 ---
 class: middle
@@ -469,9 +466,80 @@ class: middle
 ---
 class: middle
 
+# Exercise 3: GAM fitting options
+We will now look at varying the fit using things, like the degrees of freedom and penalty, that affect the smoothers (splines).
+We will also visualise these changes and effects on models.
+
+---
+# Advanced elements (1)
+
+The name of the model class is ___'Generalized Additive Model' (GAM)___  - like the ___'Generalized Linear Model' (GLM)___
++ This means we can fit other types of response distribution: e.g. Poisson or Negative Binomial for counts, binomial ("Logistic regression") for binary outcomes etc.
++ This is achieved using a 'link' function: log for Poisson, logit for binomial.  
+
+&lt;br&gt;&lt;br&gt;
+The main addition here is the `family` argument:
+
+
+``` r
+my_logistic_gam &lt;- gam(Y ~ s(X, bs="cr"), data=dt, family = "binomial")
+```
+
+--
+
+As with a GLM, the results are on the scale of the link function, so have to transform predictions back to the response scale:
+
+
+``` r
+predict(my_logistic_gam, newdata, type="response")
+```
+
+---
+# Advanced elements (2)
+
+## Interactions
+
+Sometimes our predictors are not independent of each other, and you may want to isolate the individual and combined effects.
+
+  + Smoking and drinking were highly linked: as people would often drink and smoke at pubs.
+  + A stroke drug trial might have different effects on recover depending on severity of the stroke.
+  
+--
+
+In a GLM, you would add this with a multiplicative interaction term:
+
+``` r
+my_interaction_model &lt;- glm(Y ~ X * Z , data=dt, family = "binomial")
+```
+
+--
+You can't do the same thing in an additive model, but you can make multidimensional smoothers:
+
+
+``` r
+# Within 's' - assuming they are on the same scale
+my_interaction_gam1 &lt;- gam(Y ~ s(X,Z), data=dt, family = "binomial")
+
+# As a tensor product, using te, if on different scales
+my_interaction_gam2 &lt;- gam(Y ~ te(X,Z), data=dt, family = "binomial")
+```
+
+
+
+---
+class: middle
+
+# Exercise 4: Multivariable GAMs
+We will now generalise to include more than one predictor / smooth function, how they might be combined, and effects on models.  We will also progress on to a generalised linear model, using a distribution family
+
+
+---
+class: middle
+
 # Exercise 5: Put it all together!
 We will now apply what we've learnt to the Framingham cohort study, predicting the binary variable: 'TenYearCHD' using other columns.  See how you can use smoothers on the continuous variables to get the best fit possible.
-___Hint:___ you will need to use AIC or auc to compare models, not R2.
+
+___Hint:___ you will need to use AIC or AUC/ROC to compare models, not R2.
 
 ---
 
@@ -502,25 +570,24 @@ ___Hint:___ you will need to use AIC or auc to compare models, not R2.
 ---
 # References and Further reading:
 
-#### GitHub code: 
-https://github.com/chrismainey/GAMworkshop
+#### GitHub code: https://github.com/chrismainey/GAMworkshop
 
 
 #### Simon Wood's comprehensive book:
-+ WOOD, S. N. 2017. Generalized Additive Models: An Introduction with R, Second Edition, Florida, USA, CRC Press.
++ WOOD, S. N. 2017. Generalized Additive Models: An Introduction with R, Second Edition, CRC Press.
 
 
+#### Noam Ross free online GAM course: https://noamross.github.io/gams-in-r-course/
 
-#### Noam Ross free online GAM course:
-https://noamross.github.io/gams-in-r-course/
+#### Kim Larson's great intro article: https://multithreaded.stitchfix.com/blog/2015/07/30/gam/
 
 &lt;br&gt;
 
-+ HARRELL, F. E., JR. 2001. Regression Modeling Strategies, New York, Springer-Verlag New York.
++ HARRELL, F. E., JR. 2001. Regression Modeling Strategies, Springer-Verlag.
 
 + HASTIE, T. &amp; TIBSHIRANI, R. 1986. Generalized Additive Models. Statistical Science, 1, 297-310. 291
 
-+ HASTIE, T., TIBSHIRANI, R. &amp; FRIEDMAN, J. 2009. The Elements of Statistical Learning : Data Mining, Inference, and Prediction, New York, NETHERLANDS, Springer.
++ HASTIE, T., TIBSHIRANI, R. &amp; FRIEDMAN, J. 2009. The Elements of Statistical Learning : Data Mining, Inference, and Prediction, Springer.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

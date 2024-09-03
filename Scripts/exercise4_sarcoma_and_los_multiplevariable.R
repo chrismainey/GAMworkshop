@@ -108,8 +108,10 @@ auc(gam_death)
 # Visualise the model
 plot(gam_death, pages = 1)
 
-# transform back to probability scale
+# problem is that it is on the 'logit' (log-odds of outcome) scale.
+# More interpretable if we transform back to probability scale
 plot(gam_death, pages = 1, trans = plogis)
+
 
 # Add the intercept in
 plot(gam_death, pages = 1, trans = plogis, shift = coef(gam_death)[1])
@@ -125,6 +127,7 @@ ggplot(LOS_model, aes(y=Age, x=LOS, col=factor(Death)))+
   geom_point() + theme_minimal()
 
 
+# examine the linear effect
 summary(lm(Age ~ LOS, data=LOS_model))
 
 
@@ -161,7 +164,6 @@ plot(gam_death2, scheme = 2)
 vis.gam(x = gam_death2, plot.type = "persp")
 
 vis.gam(x = gam_death2, plot.type = "persp", view = c("Age","LOS"))
-
 
 
 

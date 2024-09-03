@@ -19,7 +19,7 @@ sarcoma <- read_csv("./data/sarcoma.csv", name_repair = "universal")
 
 
 
-
+# Exercise 1a:
 ###################### Part 1: Linear regression with a single predictor  ######################################
 
 # With the Sarcoma data, we will examine the relationship between age and incidence
@@ -51,7 +51,7 @@ ggplot(sarcoma, aes(x=Age, y=Female.Cases))+
 
 
 # Does the number of cases appear related to age?  -  Some increasing relationship
-# If so, is it linearly?
+# If so, is it linearly related?
 
 
 
@@ -71,8 +71,8 @@ ggplot(sarcoma, aes(x=Age, y=Female.Rates))+
 
 
 
-# Does the number of cases appear related to age?  -  Looks to be stronger
-# If so, is it linearly? No, appears to be a peak in teenage to early twenties
+# Does the number of cases appear related to age?  -  Looks to be stronger now looking at rates.
+# If so, is it linearly related? No, appears to be a peak in teenage to early twenties
 
 
 
@@ -124,13 +124,9 @@ ggplot(sarcoma, aes(x=Age, y=Male.Rates))+
 
 
 
-### Discuss overfitting.
 
-
+# Exercise 1b
 #################################################
-
-
-
 
 # Fit the model with a spline instead
 # Use the 'splines2' package, and the natural cubic spline function naturalSpline

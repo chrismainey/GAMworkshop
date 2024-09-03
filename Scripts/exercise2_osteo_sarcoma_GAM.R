@@ -27,6 +27,7 @@ sarcoma <- read_csv("./data/sarcoma.csv", name_repair = "universal")
 # Use the 's()' function to wrap a smoother around age.  We'll let it chose for use at first.
 
 library(mgcv)
+
 sarcoma_gam1 <- gam(Male.Rates ~ s(Age),data=sarcoma)
 
 summary(sarcoma_gam1)
@@ -48,11 +49,13 @@ b <- mgcViz::getViz(sarcoma_gam1)
 o <- plot( sm(b, 1) )
 o + l_fitLine(colour = "red") + l_rug(mapping = aes(x=x, y=y), alpha = 0.8) +
   l_ciLine(mul = 5, colour = "blue", linetype = 2) +
-  l_points(shape = 19, size = 1, alpha = 0.1) + theme_classic()
+  l_points(shape = 19, size = 1, alpha = 0.1) +
+  theme_classic()
 
 
 
-# Extract the model coefficients with `coef` function.  How many coefficients are there for basis functions that make up this smooth?
+# Extract the model coefficients with `coef` function.
+# How many coefficients are there for basis functions that make up this smooth?
 coef(sarcoma_gam1)
 
 
