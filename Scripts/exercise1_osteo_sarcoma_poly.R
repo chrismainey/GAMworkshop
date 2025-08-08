@@ -19,6 +19,8 @@ sarcoma <- read_csv("./data/sarcoma.csv", name_repair = "universal")
 
 
 
+
+
 # Exercise 1a:
 ###################### Part 1: Linear regression with a single predictor  ######################################
 
@@ -83,7 +85,7 @@ ggplot(sarcoma, aes(x=Age, y=Female.Rates))+
 
 # Build a linear regression model (lm) to examine it using the summary function
 
-sarcoma_lm <- lm(Male.Rates ~ Age,data=sarcoma)
+sarcoma_lm <- lm(Male.Rates ~ Age, data=sarcoma)
 
 summary(sarcoma_lm)
 
@@ -107,17 +109,23 @@ ggplot(sarcoma, aes(x=Age, y=Male.Rates))+
 # Let's try and do this with a polynomial term or two: Age + Age^2 + Age^3
 # You can manually do it, or use the poly() function, which helps reduce correlation
 # The more higher order the terms are, the more 'wiggly' the fit.
+
+
+summary(lm(Male.Rates ~ Age + I(Age^2) + I(Age^3) + I(Age^4),data=sarcoma))
+
 sarcoma_lm_poly <- lm(Male.Rates ~ poly(Age,degree=4),data=sarcoma)
 
 summary(sarcoma_lm_poly)
 
 anova(sarcoma_lm_poly)
 
+
+
 # Visualise this again with ggplot geom_smooth.  Add the argument: formula = "y ~ naturalSpline(x)", including your options
 
 ggplot(sarcoma, aes(x=Age, y=Male.Rates))+
   geom_col(fill="mediumpurple4", col=1, alpha=0.5)+
-  geom_smooth(col="red", method = "lm", formula = "y ~ poly(x,degree=4)") +
+  geom_smooth(col="red", method = "lm", formula = "y ~ poly(x,degree=10)") +
   labs(title="Incidence Rate of Osteosarcoma in UK Males, 2016 - 2018", subtitle="Source: Cancer Research UK")+
   theme_minimal()+
   theme(plot.subtitle = element_text(face="italic"))
@@ -133,11 +141,14 @@ ggplot(sarcoma, aes(x=Age, y=Male.Rates))+
 # Try specifying a number of degrees of freedom  - explain
 # Try specifying the knots at specific ages
 
+
 library(splines2)
 
 sarcoma_lm_spline1 <- lm(Male.Rates ~ naturalSpline(Age, df=4),data=sarcoma)
 
 summary(sarcoma_lm_spline1)
+
+anova(sarcoma_lm_spline1)
 
 
 sarcoma_lm_spline2 <- lm(Male.Rates ~ naturalSpline(Age, knots= c(24,49,79)),data=sarcoma)

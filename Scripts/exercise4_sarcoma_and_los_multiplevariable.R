@@ -136,6 +136,7 @@ summary(lm(Age ~ LOS, data=LOS_model))
 # first as a logistic model with the interaction term
 glm_death2 <- glm(Death ~ Age * LOS, family = "binomial", data = LOS_model)
 
+summary(glm_death2)
 
 # Now as a GAM with a tensorproduct
 ?te

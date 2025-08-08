@@ -89,6 +89,7 @@ plot(sarcoma_gam9, residuals = TRUE, pch = 1)
 sarcoma_gam7a <- gam(Male.Rates ~ s(Age, bs="cr", k=12),data=sarcoma, sp=1e6)
 plot(sarcoma_gam7a, residuals = TRUE, pch = 1)
 
+
 ############################################################
 # Model fitting and diagnostics
 ###########################################################

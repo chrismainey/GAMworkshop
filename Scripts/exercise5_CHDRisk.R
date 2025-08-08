@@ -32,8 +32,9 @@ framingham <- read.csv("./data/framingham.csv")
 
 library(mgcv)
 
-CHDrisk <- gam(TenYearCHD ~  # enter your model terms here
+CHDrisk <- gam(TenYearCHD ~  s(totChol)
                , data = framingham
                , family = "binomial"
-               , metho = "REML")
+               , method = "REML")
 
+gam.check()

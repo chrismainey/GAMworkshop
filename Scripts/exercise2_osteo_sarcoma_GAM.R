@@ -28,7 +28,7 @@ sarcoma <- read_csv("./data/sarcoma.csv", name_repair = "universal")
 
 library(mgcv)
 
-sarcoma_gam1 <- gam(Male.Rates ~ s(Age),data=sarcoma)
+sarcoma_gam1 <- gam(Male.Rates ~ s(Age), data=sarcoma)
 
 summary(sarcoma_gam1)
 
@@ -58,6 +58,7 @@ o + l_fitLine(colour = "red") + l_rug(mapping = aes(x=x, y=y), alpha = 0.8) +
 # How many coefficients are there for basis functions that make up this smooth?
 coef(sarcoma_gam1)
 
+gam.check(sarcoma_gam1)
 
 # Can you interpret any of those coefficients?
 # How do you know if they are 'significant'?
@@ -75,6 +76,7 @@ sarcoma$gam1_preds <- predict(sarcoma_gam1, newdata = sarcoma)
 # also compare to predictions form our original model
 
 sarcoma$lm_preds <- predict(sarcoma_lm, newdata = sarcoma)
+
 sarcoma$lm_poly_preds <- predict(sarcoma_lm_poly, newdata = sarcoma)
 
 ggplot(sarcoma, aes(y=Male.Rates))+

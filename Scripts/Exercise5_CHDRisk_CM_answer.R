@@ -57,7 +57,7 @@ CHDrisk2 <- gam(TenYearCHD ~  factor(male)
                + s(totChol)
                , data = framingham
                , family = "binomial"
-               , metho = "REML")
+               , method = "REML")
 
 
 
@@ -71,7 +71,7 @@ CHDrisk3 <- gam(TenYearCHD ~  factor(male)
                 + s(totChol)
                 , data = framingham
                 , family = "binomial"
-                , metho = "REML")
+                , method = "REML")
 
 
 CHDrisk4 <- gam(TenYearCHD ~  factor(male)
@@ -86,7 +86,7 @@ CHDrisk4 <- gam(TenYearCHD ~  factor(male)
                 + s(totChol)
                 , data = framingham
                 , family = "binomial"
-                , metho = "REML")
+                , method = "REML")
 
 
 
